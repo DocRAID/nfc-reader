@@ -1,7 +1,12 @@
 
 const { NFC } = require('nfc-pcsc');
-
 const nfc = new NFC(); // optionally you can pass logger
+
+const express = require('express');
+const app = express();
+const mysql_dbc = require('./models/db_con')();
+const pool = mysql_dbc.init_pool();
+app.set('port', process.env.PORT || 8080);
 
 nfc.on('reader', reader => {
 
@@ -23,6 +28,20 @@ nfc.on('reader', reader => {
 		console.log("nfc가 입력되었습니다.")
 		console.log(`${reader.reader.name}  card detected`, card);
 		console.log(card.uid)
+
+		// connection.query('select * from new_boards', function (err, result) {
+		// 	console.log(err);
+		// 	if (err) {
+		// 		var err = new Error('Not Found');
+		// 		err.status = 404;
+		// 		console.log(err)
+		// 		// next(err);
+		// 	} else {
+		// 		console.log(JSON.stringify(result));
+		// 		res.json(result);
+		// 	}
+		// 	connection.release();
+		// });
 	});
 
 	reader.on('card.off', card => {
@@ -45,4 +64,8 @@ nfc.on('reader', reader => {
 
 nfc.on('error', err => {
 	console.log('an error occurred', err);
+});
+
+app.listen(app.get('port'), () => {
+    console.log(app.get('port'), '번 포트에서 서버 실행 중 ..')
 });

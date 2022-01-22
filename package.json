@@ -12,6 +12,7 @@
     "express": "^4.17.2",
     "mysql": "^2.18.1",
     "mysql2": "^2.3.3",
-    "nfc-pcsc": "^0.8.1"
+    "nfc-pcsc": "^0.8.1",
+    "sequelize": "^7.0.0-alpha.4"
   }
 }
