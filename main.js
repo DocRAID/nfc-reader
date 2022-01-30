@@ -19,14 +19,16 @@ nfc.on('reader', reader => {
 		console.log(`${reader.reader.name}  card detected`, card);
 		console.log(card.uid)
 
-		// try {
-		// 	async function select() {
-		// 		await db.select('*').from('test')
-		// 	}
-		// } catch (error) {
+		try {
+			(async () => {
+
+				const data = await db.select('*').from('test')
+				console.log(data)
 			
-		// }
-		// console.log(select())
+			})()
+		} catch (error) {
+			
+		}
 	});
 
 	reader.on('card.off', card => {
