@@ -1,6 +1,6 @@
 const knex = require('knex')
 
-export const db = knex({
+const db = knex({
     client: "mysql",
     connection: {
         host: 'localhost',
@@ -10,3 +10,4 @@ export const db = knex({
         database: 'nfc'
     }
 })
+module.exports ={db}
