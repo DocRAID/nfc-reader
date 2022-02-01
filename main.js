@@ -16,7 +16,7 @@ nfc.on('reader', reader => {
 		// [only TAG_ISO_14443_4] Buffer data: raw data from select APDU response
 
 		console.log("nfc가 입력되었습니다.")
-		console.log(`${reader.reader.name}  card detected`, card);
+		// console.log(`${reader.reader.name}  card detected`, card);
 		console.log(card.uid)
 
 		try {
@@ -33,7 +33,7 @@ nfc.on('reader', reader => {
 
 	reader.on('card.off', card => {
 		console.log("nfc가 정상처리 되었습니다.")
-		console.log(`${reader.reader.name}  card removed`, card);
+		// console.log(`${reader.reader.name}  card removed`, card);
 	});
 
 	reader.on('error', err => {
