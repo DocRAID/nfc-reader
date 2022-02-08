@@ -21,9 +21,10 @@ nfc.on('reader', reader => {
 
 		try {
 			(async () => {
-
-				const data = await db.select('*').from('test')
-				console.log(data)
+				// 만약 입력된 uid가 데이터베이스에 없다면 register 펑션 작동. SELECT stu_id FROM student_info WHERE nfc_uid='048a235ad37280';
+				// 있으면 정상적으로 처리 
+				const data = await db.select('stu_id').from('student_info').where('nfc_uid',card.uid)
+				console.log(data[0].stu_id)
 			
 			})()
 		} catch (error) {
