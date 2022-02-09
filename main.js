@@ -2,6 +2,7 @@
 const { NFC } = require('nfc-pcsc'); //nfc 모듈 
 const express = require('express'); //express 
 const { db } = require('./variable/database.js'); //db 모듈 
+const { now } = require('sequelize/dist/lib/utils');
 const app = express();
 app.use(express.json());
 app.listen(8080, ()=> console.log('server running!'))
@@ -23,8 +24,19 @@ nfc.on('reader', reader => {
 			(async () => {
 				// 만약 입력된 uid가 데이터베이스에 없다면 register 펑션 작동. SELECT stu_id FROM student_info WHERE nfc_uid='048a235ad37280';
 				// 있으면 정상적으로 처리 
-				const data = await db.select('stu_id').from('student_info').where('nfc_uid',card.uid)
-				console.log(data[0].stu_id)
+				const data = await db.select('stu_id','stu_name')
+				.from('student_info')
+				.where('nfc_uid',card.uid)
+				.catch(function(error) { console.log("등록되지 않은 정보입니다."+ error) }); // 여기가 이상함.
+
+				console.log(data[0].stu_id + " 번 " + data[0].stu_name + " 님이 조회되셨습니다.")
+				//INSERT INTO attend VALUES(NULL,1213,'rate',NOW())
+				// db('attend').insert({
+				// 	id:null,
+				// 	stu_id:data[0].stu_id,
+				// 	israte:'yes',
+				// 	attend_time:now()
+				// })
 			
 			})()
 		} catch (error) {
