@@ -2,7 +2,6 @@
 const { NFC } = require('nfc-pcsc'); //nfc 모듈 
 const express = require('express'); //express 
 const { db } = require('./variable/database.js'); //db 모듈 
-const { now } = require('sequelize/dist/lib/utils');
 const app = express();
 app.use(express.json());
 app.listen(8080, ()=> console.log('server running!'))
@@ -31,12 +30,12 @@ nfc.on('reader', reader => {
 
 				console.log(data[0].stu_id + " 번 " + data[0].stu_name + " 님이 조회되셨습니다.")
 				//INSERT INTO attend VALUES(NULL,1213,'rate',NOW())
-				// db('attend').insert({
-				// 	id:null,
-				// 	stu_id:data[0].stu_id,
-				// 	israte:'yes',
-				// 	attend_time:now()
-				// })
+				await db('attend').insert({
+					//id:null,
+					stu_id:data[0].stu_id,
+					israte:'yes',
+					// attend_time:''
+				})
 			
 			})()
 		} catch (error) {
