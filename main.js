@@ -6,19 +6,13 @@ const app = express();
 app.use(express.json());
 app.listen(8080, ()=> console.log('server running!'))
 
-const nfc = new NFC(); // optionally you can pass logger
+const nfc = new NFC();
 nfc.on('reader', reader => {
-
 	console.log(`${reader.reader.name} 기기가 인식되었습니다.`);
-
 	reader.on('card', card => {
-		// [only TAG_ISO_14443_3] String uid: tag uid
-		// [only TAG_ISO_14443_4] Buffer data: raw data from select APDU response
-
 		console.log("nfc가 입력되었습니다.")
 		// console.log(`${reader.reader.name}  card detected`, card);
 		console.log(card.uid)
-
 		try {
 			(async () => {
 				// 만약 입력된 uid가 데이터베이스에 없다면 register 펑션 작동. SELECT stu_id FROM student_info WHERE nfc_uid='048a235ad37280';
@@ -26,8 +20,7 @@ nfc.on('reader', reader => {
 				const data = await db.select('stu_id','stu_name')
 				.from('student_info')
 				.where('nfc_uid',card.uid)
-				.catch(function(error) { console.log("등록되지 않은 정보입니다."+ error) }); // 여기가 이상함.
-
+				.catch(function(error) { console.log("등록되지 않은 정보입니다."+ error) }); // 여기가 이상함 수정할 필요 있음.
 				console.log(data[0].stu_id + " 번 " + data[0].stu_name + " 님이 조회되셨습니다.")
 				//INSERT INTO attend VALUES(NULL,1213,'rate',NOW())
 				await db('attend').insert({
@@ -36,10 +29,9 @@ nfc.on('reader', reader => {
 					israte:'yes',
 					// attend_time:''
 				})
-			
 			})()
 		} catch (error) {
-			
+
 		}
 	});
 
@@ -56,9 +48,8 @@ nfc.on('reader', reader => {
 	reader.on('end', () => {
 		console.log("기기가 연결되지 않았습니다.")
 		console.log(`${reader.reader.name}  device removed`);
-		
 	});
-
+	
 });
 
 nfc.on('error', err => {
