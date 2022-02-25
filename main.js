@@ -6,6 +6,7 @@ const app = express();
 app.use(express.json());
 app.listen(8080, ()=> console.log('server running!'))
 
+//만들어야 할거 : 학생이 아닐때 뭐시기 하고 미들워에 만들기
 const nfc = new NFC();
 nfc.on('reader', reader => {
 	console.log(`${reader.reader.name} 기기가 인식되었습니다.`);
@@ -20,18 +21,24 @@ nfc.on('reader', reader => {
 				const data = await db.select('stu_id','stu_name')
 				.from('student_info')
 				.where('nfc_uid',card.uid)
-				.catch(function(error) { console.log("등록되지 않은 정보입니다."+ error) }); // 여기가 이상함 수정할 필요 있음.
-				console.log(data[0].stu_id + " 번 " + data[0].stu_name + " 님이 조회되셨습니다.")
-				//INSERT INTO attend VALUES(NULL,1213,'rate',NOW())
-				await db('attend').insert({
-					//id:null,
-					stu_id:data[0].stu_id,
-					israte:'yes',
-					// attend_time:''
-				})
+				.then(
+					async(data)=>{
+						if(data[0]!=null){
+							console.log(data[0].stu_id + " 번 " + data[0].stu_name + " 님이 조회되셨습니다.")
+							await db('attend').insert({
+								//id:null,
+								stu_id:data[0].stu_id,
+								israte:'yes',
+								// attend_time:''
+							})
+						}
+						else{
+							console.log("마 니 학생 아이지? ㅋㅋ")
+						}
+					}
+				)
 			})()
 		} catch (error) {
-
 		}
 	});
 
