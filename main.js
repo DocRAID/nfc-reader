@@ -1,4 +1,3 @@
-
 const { NFC } = require('nfc-pcsc'); //nfc 모듈 
 const express = require('express'); //express 
 const { db } = require('./variable/database.js'); //db 모듈 
@@ -30,14 +29,12 @@ function insertInfo(input_uid){
 		});
 		rl.on('close', () => {
 			console.log(stuId,stuName,input_uid);
-			(async ()=>{
-				await db('student_info').insert({
+			
+				db('student_info').insert({
 					stu_id: stuId,
 					stu_name: stuName,
 					nfc_uid: input_uid
-				})
-			})
-				console.log("정상적인 등록이 되었습니다. 위 정보에 이상이 있으시면 문의 바랍니다.")
+				}).then(console.log("정상적인 등록이 되었습니다. 위 정보에 이상이 있으시면 문의 바랍니다."))
 				return 0;
 		})
 	} catch (error) {
@@ -104,4 +101,3 @@ nfc.on('reader', reader => {
 nfc.on('error', err => {
 	console.log('an error occurred', err);
 });
-
