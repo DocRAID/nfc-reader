@@ -6,6 +6,44 @@ const app = express();
 app.use(express.json());
 app.listen(8080, ()=> console.log('server running!'))
 
+function insertInfo(input_uid){
+	//정보가 없을시 임의로 등록하는 함수
+	try {
+		let stuId, stuName;
+		const readline = require("readline");
+		const rl = readline.createInterface({
+			input: process.stdin,
+			output: process.stdout,
+		});
+		console.log("학번을 기입해주세요 ex)1학년 1반 1번 => 1101")
+		rl.on("line", (line) => {
+			if(!stuId){
+				stuId=line
+				stuId=parseInt(stuId)
+				console.log("이름을 적어주세요")
+			}
+			else if(!stuName){
+				stuName=line
+				rl.close();
+				//직책 넣는건 아직 안만듬
+			}
+		});
+		rl.on('close', () => {
+			console.log(stuId,stuName,input_uid);
+			(async ()=>{
+				await db('student_info').insert({
+					stu_id: stuId,
+					stu_name: stuName,
+					nfc_uid: input_uid
+				})
+			})
+				console.log("정상적인 등록이 되었습니다. 위 정보에 이상이 있으시면 문의 바랍니다.")
+				return 0;
+		})
+	} catch (error) {
+		console.log("에러!")
+	}
+}
 //만들어야 할거 : 학생이 아닐때 뭐시기 하고 미들워에 만들기
 const nfc = new NFC();
 nfc.on('reader', reader => {
@@ -21,22 +59,26 @@ nfc.on('reader', reader => {
 				const data = await db.select('stu_id','stu_name')
 				.from('student_info')
 				.where('nfc_uid',card.uid)
-				.then(
-					async(data)=>{
-						if(data[0]!=null){
-							console.log(data[0].stu_id + " 번 " + data[0].stu_name + " 님이 조회되셨습니다.")
-							await db('attend').insert({
-								//id:null,
-								stu_id:data[0].stu_id,
-								israte:'yes',
-								// attend_time:''
-							})
-						}
-						else{
-							console.log("마 니 학생 아이지? ㅋㅋ")
-						}
+				.then(async(data)=>{
+					if(data[0]!=null){
+						console.log(data[0].stu_id + " 번 " + data[0].stu_name + " 님이 조회되셨습니다.")
+						await db('attend').insert({
+							//id:null,
+							stu_id:data[0].stu_id,
+							israte:'yes',
+							// attend_time:''
+						})
+						const whatPosition = data[0].stu_id/1000
+						console.log(whatPosition)
+						//뭘 기준으로 하려했더라..
 					}
-				)
+					else{
+						console.log("등록되지 않은 nfc 입니다.")
+						console.log("카드를 대고 있는 상태에서 정보를 기입합니다.")
+						console.log("등록을 취소하시려면 카드를 때주세요")
+						insertInfo(card.uid);
+					}
+				})
 			})()
 		} catch (error) {
 		}
