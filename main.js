@@ -84,6 +84,7 @@ nfc.on('reader', reader => {
 	reader.on('card.off', card => {
 		console.log("nfc가 정상처리 되었습니다.")
 		// console.log(`${reader.reader.name}  card removed`, card);
+		//뭔가 되어야 함
 	});
 
 	reader.on('error', err => {
