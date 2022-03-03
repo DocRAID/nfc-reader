@@ -4,11 +4,11 @@ const { db } = require('./variable/database.js'); //db 모듈
 const app = express();
 app.use(express.json());
 app.listen(8080, ()=> console.log('server running!'))
-
+//attend에 이름도 넣으셈
 function insertInfo(input_uid){
 	//정보가 없을시 임의로 등록하는 함수
 	try {
-		let stuId, stuName;
+		let stuId, stuName,position;
 		const readline = require("readline");
 		const rl = readline.createInterface({
 			input: process.stdin,
@@ -23,8 +23,13 @@ function insertInfo(input_uid){
 			}
 			else if(!stuName){
 				stuName=line
-				rl.close();
+				console.log("고등학생 : 1 , 중학생 : 2 , 교직원 : 0")
 				//직책 넣는건 아직 안만듬
+			}
+			else if(!position){
+				position=line
+				stuId+=(1000*position)
+				rl.close();
 			}
 		});
 		rl.on('close', () => {
@@ -35,6 +40,9 @@ function insertInfo(input_uid){
 					stu_name: stuName,
 					nfc_uid: input_uid
 				}).then(console.log("정상적인 등록이 되었습니다. 위 정보에 이상이 있으시면 문의 바랍니다."))
+				stuId=""
+				stuName=""
+				input_uid=0
 				return 0;
 		})
 	} catch (error) {
